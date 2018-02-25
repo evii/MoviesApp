@@ -2,4 +2,8 @@
     <string name="app_name">Movies App</string>
     <string name="API_key">API_key</string>
 
+    <string name="popularity">Sort by popularity</string>
+    <string name="highest_rated">Sort by highest rated</string>
+
+
 </resources>

@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,11 +29,33 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView imageView = findViewById(R.id.iw);
         Picasso.with(this).load("https://www.albertina.at/site/assets/files/1456/9_pablo_picasso_-_frau_mit_gruenem_hut.1200x0.jpg").into(imageView);
-        URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByPopularity);
-        new getMovieJSONTask().execute(url);
+
 
     }
 
+    // Creating menu for sorting by Popularity or by Vote
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    // Creating functionality for the menu items - sort by Popularity or by Vote
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemClicked = item.getItemId();
+        if (itemClicked == R.id.sort_by_poularity) {
+            URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByPopularity);
+            new getMovieJSONTask().execute(url);
+        }
+        if (itemClicked == R.id.sort_by_rating) {
+            URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByVote);
+            new getMovieJSONTask().execute(url);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // Async task for connection to internet and retreiving JSON
     public class getMovieJSONTask extends AsyncTask<URL, Void, String> {
 
         @Override
