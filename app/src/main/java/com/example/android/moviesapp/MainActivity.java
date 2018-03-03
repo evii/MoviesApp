@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Async task for connection to internet, retreiving and parsing JSON
-    public class getMovieJSONTask extends AsyncTask<URL, Void, List<Movie>> {
+public class getMovieJSONTask extends AsyncTask<URL, Void, List<Movie>> {
 
         @Override
         protected List<Movie> doInBackground(URL... urls) {

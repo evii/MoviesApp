@@ -2,6 +2,7 @@ package com.example.android.moviesapp.utilities;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.android.moviesapp.Movie;
 import com.example.android.moviesapp.R;
@@ -24,15 +25,14 @@ import java.util.Scanner;
  */
 
 public class NetworkUtilities {
-    private final static String BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
-    private final static String SORT_PARAM = "sort_by";
-    public final static String sortByPopularity = "popularity.desc";
-    public final static String sortByVote = "vote_average.desc";
+    private final static String BASE_URL = "https://api.themoviedb.org/3/movie/";
+    public final static String sortByPopularity = "popular";
+    public final static String sortByVote = "top_rated";
     private final static String API_KEY_PARAM = "api_key";
 
     public static URL buildUri(Context context, String sortBy) {
         Uri searchUri = Uri.parse(BASE_URL).buildUpon()
-                .appendQueryParameter(SORT_PARAM, sortBy)
+                .appendPath(sortBy)
                 .appendQueryParameter(API_KEY_PARAM, context.getResources().getString(R.string.API_key))
                 .build();
         URL searchUrl = null;
@@ -41,7 +41,6 @@ public class NetworkUtilities {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-
         return searchUrl;
     }
 
