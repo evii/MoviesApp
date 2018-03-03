@@ -1,7 +1,9 @@
 package com.example.android.moviesapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -9,11 +11,13 @@ import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
 
-    ImageView posterIV;
-    TextView titleTV;
-    TextView releaseTV;
-    TextView voteTV;
-    TextView synopsisTV;
+    private ImageView posterIV;
+    private TextView titleTV;
+    private TextView releaseTV;
+    private TextView voteTV;
+    private TextView synopsisTV;
+
+    private static final String LOG_TAG = "DetailActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,23 +32,38 @@ public class DetailActivity extends AppCompatActivity {
         voteTV = findViewById(R.id.vote_tv);
         synopsisTV = findViewById(R.id.synopsis_tv);
 
-        Movie selectedMovie = getIntent().getParcelableExtra("selectedMovie");
+        Intent intent = getIntent();
+        if (intent != null) {
+            Bundle parcelableExtra = null;
+            if (parcelableExtra != null) {
+                if (parcelableExtra.containsKey("selectedMovie")) {
+                    Movie selectedMovie = intent.getParcelableExtra("selectedMovie");
 
-        String title = selectedMovie.getTitle();
-        titleTV.setText(title);
-        setTitle(title);
+                    String title = selectedMovie.getTitle();
+                    titleTV.setText(title);
+                    setTitle(title);
 
-        String releaseDate = selectedMovie.getReleaseDate();
-        releaseTV.setText(releaseDate);
+                    String releaseDate = selectedMovie.getReleaseDate();
+                    releaseTV.setText(releaseDate);
 
-        Double vote = selectedMovie.getVote();
-        String voteString = vote.toString();
-        voteTV.setText(voteString);
+                    Double vote = selectedMovie.getVote();
+                    String voteString = vote.toString();
+                    voteTV.setText(voteString);
 
-        String synopsis = selectedMovie.getOverview();
-        synopsisTV.setText(synopsis);
+                    String synopsis = selectedMovie.getOverview();
+                    synopsisTV.setText(synopsis);
 
-        String posterUrl = selectedMovie.getPosterPath();
-        Picasso.with(this).load(posterUrl).into(posterIV);
+                    String posterUrl = selectedMovie.getPosterPath();
+                    Picasso.with(this).load(posterUrl).into(posterIV);
+                } else {
+                    Log.i(LOG_TAG, "Parcelable does not contain selected movie info.");
+                }
+            } else {
+                Log.i(LOG_TAG, "Parcelable is null");
+            }
+        } else {
+            Log.i(LOG_TAG, "Intent is null.");
+        }
     }
 }
+
