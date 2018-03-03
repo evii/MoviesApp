@@ -3,13 +3,20 @@ package com.example.android.moviesapp.utilities;
 import android.content.Context;
 import android.net.Uri;
 
+import com.example.android.moviesapp.Movie;
 import com.example.android.moviesapp.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -42,7 +49,6 @@ public class NetworkUtilities {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
             InputStream in = urlConnection.getInputStream();
-
             Scanner scanner = new Scanner(in);
             scanner.useDelimiter("\\A");
 
@@ -57,4 +63,26 @@ public class NetworkUtilities {
         }
     }
 
+    public static List<Movie> readJSON(String json) {
+        List<Movie> movies = new ArrayList<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONArray resultsArray = jsonObject.optJSONArray("results");
+            for (int i = 0; i < resultsArray.length(); i++) {
+
+                String title = resultsArray.optJSONObject(i).optString("title");
+                String releaseDate = resultsArray.optJSONObject(i).optString("release_date");
+                double voteAverage = resultsArray.optJSONObject(i).optDouble("vote_average");
+                String overview = resultsArray.optJSONObject(i).optString("overview");
+                String posterPath = resultsArray.optJSONObject(i).optString("poster_path");
+                Movie movieReadFromJSON = new Movie(title, releaseDate, voteAverage, overview, posterPath);
+                movies.add(movieReadFromJSON);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
 }

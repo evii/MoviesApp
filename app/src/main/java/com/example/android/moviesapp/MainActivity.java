@@ -1,36 +1,49 @@
 package com.example.android.moviesapp;
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
 
 import com.example.android.moviesapp.utilities.NetworkUtilities;
-import com.squareup.picasso.Downloader;
-import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private MoviesAdapter moviesAdapter;
+    GridView gridView;
+    public List<Movie> movies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageView imageView = findViewById(R.id.iw);
-        Picasso.with(this).load("https://www.albertina.at/site/assets/files/1456/9_pablo_picasso_-_frau_mit_gruenem_hut.1200x0.jpg").into(imageView);
+        //first loading of movies
+        URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByPopularity);
+        new getMovieJSONTask().execute(url);
 
-
+        gridView = findViewById(R.id.gridview);
+// setting onItemClickListener on the items in gridview
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                Movie selectedMovie = movies.get(position);
+                intent.putExtra("selectedMovie", (Parcelable) selectedMovie);
+                startActivity(intent);
+            }
+        });
     }
 
     // Creating menu for sorting by Popularity or by Vote
@@ -55,25 +68,29 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // Async task for connection to internet and retreiving JSON
-    public class getMovieJSONTask extends AsyncTask<URL, Void, String> {
+    // Async task for connection to internet, retreiving and parsing JSON
+    public class getMovieJSONTask extends AsyncTask<URL, Void, List<Movie>> {
 
         @Override
-        protected String doInBackground(URL... urls) {
+        protected List<Movie> doInBackground(URL... urls) {
             URL url = urls[0];
             String JSONResult = "";
+            movies = new ArrayList<>();
             try {
-              JSONResult = NetworkUtilities.getResponseFromUrl(url);
+                JSONResult = NetworkUtilities.getResponseFromUrl(url);
+                movies = NetworkUtilities.readJSON(JSONResult);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return JSONResult;
+            return movies;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            TextView textView = findViewById(R.id.tw);
-            textView.setText(s);
+        protected void onPostExecute(List<Movie> movies) {
+
+            moviesAdapter = new MoviesAdapter(MainActivity.this, movies);
+            gridView.setAdapter(moviesAdapter);
+            super.onPostExecute(movies);
         }
     }
 }
