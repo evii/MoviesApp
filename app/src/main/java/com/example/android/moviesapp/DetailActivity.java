@@ -34,7 +34,7 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            Bundle parcelableExtra = null;
+            Bundle parcelableExtra = intent.getExtras();
             if (parcelableExtra != null) {
                 if (parcelableExtra.containsKey("selectedMovie")) {
                     Movie selectedMovie = intent.getParcelableExtra("selectedMovie");
