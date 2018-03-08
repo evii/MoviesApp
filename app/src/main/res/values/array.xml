@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="sort_options_labels">
+        <item>@string/popularity</item>
+        <item>@string/highest_rated</item>
+        <item>@string/favorites</item>
+    </array>
+
+    <array name="sort_options_values">
+        <item>@string/popularity_label</item>
+        <item>@string/highest_rated_label</item>
+        <item>@string/favorites_label</item>
+    </array>
+
+
+</resources>
