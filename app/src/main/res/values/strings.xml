@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Movies App</string>
     <!-- YOUR API key needs to be inserted here with the key API_key
-    -->
 
-
+    <string name="API_key">XXXXXXXXXXXXXXXXXXXXX</string>
+-->
     <string name="popularity">Sort by popularity</string>
     <string name="highest_rated">Sort by highest rated</string>
     <string name="favorites">Display favorites</string>

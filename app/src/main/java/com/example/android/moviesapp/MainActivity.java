@@ -1,11 +1,13 @@
 package com.example.android.moviesapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.Preference;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +22,7 @@ import com.example.android.moviesapp.utilities.OnTaskCompleted;
 
 import java.net.URL;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted, SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -99,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
 
     @Override
     public void onTaskCompleted(List<Movie> movies) {
+        Log.v("ontaskcompletedcalled", "ontaskcompletedcalled");
         mMovies = movies;
         moviesAdapter = new MoviesAdapter(MainActivity.this, movies);
         gridView.setAdapter(moviesAdapter);
@@ -106,13 +110,15 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals(getString(R.string.popularity_label))){
-            URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByPopularity);
-            new GetMovieJSONTask(MainActivity.this).execute(url);
-        }
-        else if(key.equals(getString(R.string.highest_rated_label))) {
-            URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByVote);
-            new GetMovieJSONTask(MainActivity.this).execute(url);
+
+        Log.v("onSharedPreferenceCheck", "key: "+key);
+        Log.v ("onSharedPreferenceCheck", "preference: "+(getString(R.string.popularity_label)));
+
+
+
+
+        if(key.equals(getString(R.string.pref_key))) {
+            loadSortDisplayPreferences(sharedPreferences);
         }
         else{
             return;
