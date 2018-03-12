@@ -28,6 +28,11 @@ public class Movie implements Parcelable {
     @SerializedName("poster_path")
     private String mPosterPath;
 
+    @SerializedName("id")
+    private int mId;
+
+
+
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         public Movie createFromParcel(Parcel in) {
             return new Movie(in);
@@ -39,12 +44,13 @@ public class Movie implements Parcelable {
         }
     };
 
-    public Movie(String title, String releaseDate, double voteAverage, String overview, String posterPath) {
+    public Movie(String title, String releaseDate, double voteAverage, String overview, String posterPath, int id) {
         mTitle = title;
         mReleaseDate = releaseDate;
         mVoteAverage = voteAverage;
         mOverview = overview;
-        mPosterPath = "http://image.tmdb.org/t/p/w500/" + posterPath;
+        mPosterPath = posterPath;
+        mId = id;
 
     }
 
@@ -54,6 +60,7 @@ public class Movie implements Parcelable {
         mVoteAverage = in.readDouble();
         mOverview = in.readString();
         mPosterPath = in.readString();
+        mId = in.readInt();
     }
 
     public String getTitle() {
@@ -73,7 +80,11 @@ public class Movie implements Parcelable {
     }
 
     public String getPosterPath() {
-        return mPosterPath;
+        return "http://image.tmdb.org/t/p/w500/" + mPosterPath;
+    }
+
+    public int getId() {
+        return mId;
     }
 
     @Override
@@ -88,6 +99,7 @@ public class Movie implements Parcelable {
         parcel.writeDouble(mVoteAverage);
         parcel.writeString(mOverview);
         parcel.writeString(mPosterPath);
+        parcel.writeInt(mId);
     }
 
     public static class MovieResult {

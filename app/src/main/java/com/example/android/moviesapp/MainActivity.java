@@ -20,29 +20,19 @@ import android.widget.GridView;
 import com.example.android.moviesapp.Settings.SettingsActivity;
 import com.example.android.moviesapp.utilities.ApiClient;
 import com.example.android.moviesapp.utilities.ApiInterface;
-import com.example.android.moviesapp.utilities.GetMovieJSONTask;
-import com.example.android.moviesapp.utilities.NetworkUtilities;
-import com.example.android.moviesapp.utilities.OnTaskCompleted;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URL;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements OnTaskCompleted, SharedPreferences.OnSharedPreferenceChangeListener{
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private MoviesAdapter moviesAdapter;
     private GridView gridView;
     public List<Movie> mMovies;
     private String API_KEY;
-    private static final String TAG = "MainActivityRetrofit";
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
 
     private void loadSortDisplayPreferences(SharedPreferences sharedPreferences) {
         String preferenceSelected = sharedPreferences.getString(getString(R.string.pref_key), getString(R.string.popularity_label));
-
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         if (preferenceSelected.equals(getString(R.string.popularity_label))) {
@@ -83,16 +72,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
                 @Override
                 public void onResponse(Call<Movie.MovieResult> call, Response<Movie.MovieResult> response) {
                     List<Movie> movies = response.body().getResults();
-                    Movie movie1 = movies.get(0);
-                    String path = movie1.getPosterPath();
-
-                    Log.v(TAG, "Number of Popular movies received: " + movies.size());
-                    Log.v(TAG, "Posterpath: " + path);
-
                     mMovies = movies;
                     moviesAdapter = new MoviesAdapter(MainActivity.this, movies);
                     gridView.setAdapter(moviesAdapter);
-
                 }
 
                 @Override
@@ -100,11 +82,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
                     Log.e(TAG, t.toString());
                 }
             });
-
-
-            /*URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByPopularity);
-            new GetMovieJSONTask(MainActivity.this).execute(url);*/
-
 
         } else if (preferenceSelected.equals(getString(R.string.highest_rated_label))) {
 
@@ -117,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
                 @Override
                 public void onResponse(Call<Movie.MovieResult> call, Response<Movie.MovieResult> response) {
                     List<Movie> movies = response.body().getResults();
-                    Log.v(TAG, "Number of top rated movies received: " + movies.size());
                     mMovies = movies;
                     moviesAdapter = new MoviesAdapter(MainActivity.this, movies);
                     gridView.setAdapter(moviesAdapter);
@@ -129,12 +105,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
                 }
             });
 
-
-
-
-        /*    URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByVote);
-            new GetMovieJSONTask(MainActivity.this).execute(url);
-        */
 
         } else if (preferenceSelected.equals(getString(R.string.favorites_label))) {
             return;
@@ -166,14 +136,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onTaskCompleted(List<Movie> movies) {
-
-        mMovies = movies;
-        moviesAdapter = new MoviesAdapter(MainActivity.this, movies);
-        gridView.setAdapter(moviesAdapter);
     }
 
     @Override
