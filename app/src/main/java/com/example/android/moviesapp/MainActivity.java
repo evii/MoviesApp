@@ -3,6 +3,7 @@ package com.example.android.moviesapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.ColorSpace;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,20 +16,33 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+
 import com.example.android.moviesapp.Settings.SettingsActivity;
+import com.example.android.moviesapp.utilities.ApiClient;
+import com.example.android.moviesapp.utilities.ApiInterface;
 import com.example.android.moviesapp.utilities.GetMovieJSONTask;
 import com.example.android.moviesapp.utilities.NetworkUtilities;
 import com.example.android.moviesapp.utilities.OnTaskCompleted;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URL;
 import java.util.List;
 import java.util.prefs.Preferences;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted, SharedPreferences.OnSharedPreferenceChangeListener{
 
     private MoviesAdapter moviesAdapter;
     private GridView gridView;
     public List<Movie> mMovies;
+    private String API_KEY;
+    private static final String TAG = "MainActivityRetrofit";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
         setContentView(R.layout.activity_main);
 
         gridView = findViewById(R.id.gridview);
+        API_KEY = this.getResources().getString(R.string.API_key);
 
 // setting onItemClickListener on the items in gridview
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -54,21 +69,74 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
 
     private void loadSortDisplayPreferences(SharedPreferences sharedPreferences) {
         String preferenceSelected = sharedPreferences.getString(getString(R.string.pref_key), getString(R.string.popularity_label));
+
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
-        Log.v("preferenceSelected", preferenceSelected);
-        Log.v("preferencelabel",getString(R.string.popularity_label) );
-        Log.v("preferencelabel",getString(R.string.highest_rated_label) );
-        Log.v("preferencelabel",getString(R.string.favorites_label) );
+        if (preferenceSelected.equals(getString(R.string.popularity_label))) {
+
+            ApiInterface apiInterface =
+                    ApiClient.getClient().create(ApiInterface.class);
+
+            Call<Movie.MovieResult> call = apiInterface.getPopularMovies(API_KEY);
+            call.enqueue(new Callback<Movie.MovieResult>() {
+
+                @Override
+                public void onResponse(Call<Movie.MovieResult> call, Response<Movie.MovieResult> response) {
+                    List<Movie> movies = response.body().getResults();
+                    Movie movie1 = movies.get(0);
+                    String path = movie1.getPosterPath();
+
+                    Log.v(TAG, "Number of Popular movies received: " + movies.size());
+                    Log.v(TAG, "Posterpath: " + path);
+
+                    mMovies = movies;
+                    moviesAdapter = new MoviesAdapter(MainActivity.this, movies);
+                    gridView.setAdapter(moviesAdapter);
+
+                }
+
+                @Override
+                public void onFailure(Call<Movie.MovieResult> call, Throwable t) {
+                    Log.e(TAG, t.toString());
+                }
+            });
 
 
-        if (preferenceSelected == getString(R.string.popularity_label)) {
-            URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByPopularity);
+            /*URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByPopularity);
+            new GetMovieJSONTask(MainActivity.this).execute(url);*/
+
+
+        } else if (preferenceSelected.equals(getString(R.string.highest_rated_label))) {
+
+            ApiInterface apiInterface =
+                    ApiClient.getClient().create(ApiInterface.class);
+
+            Call<Movie.MovieResult> call = apiInterface.getTopRatedMovies(API_KEY);
+            call.enqueue(new Callback<Movie.MovieResult>() {
+
+                @Override
+                public void onResponse(Call<Movie.MovieResult> call, Response<Movie.MovieResult> response) {
+                    List<Movie> movies = response.body().getResults();
+                    Log.v(TAG, "Number of top rated movies received: " + movies.size());
+                    mMovies = movies;
+                    moviesAdapter = new MoviesAdapter(MainActivity.this, movies);
+                    gridView.setAdapter(moviesAdapter);
+                }
+
+                @Override
+                public void onFailure(Call<Movie.MovieResult> call, Throwable t) {
+                    Log.e(TAG, t.toString());
+                }
+            });
+
+
+
+
+        /*    URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByVote);
             new GetMovieJSONTask(MainActivity.this).execute(url);
-        } else if (preferenceSelected == getString(R.string.highest_rated_label)) {
-            URL url = NetworkUtilities.buildUri(getApplicationContext(), NetworkUtilities.sortByVote);
-            new GetMovieJSONTask(MainActivity.this).execute(url);
-        } else if (preferenceSelected == getString(R.string.favorites_label)) {
+        */
+
+        } else if (preferenceSelected.equals(getString(R.string.favorites_label))) {
             return;
         } else {
             return;
@@ -102,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
 
     @Override
     public void onTaskCompleted(List<Movie> movies) {
-        Log.v("ontaskcompletedcalled", "ontaskcompletedcalled");
+
         mMovies = movies;
         moviesAdapter = new MoviesAdapter(MainActivity.this, movies);
         gridView.setAdapter(moviesAdapter);
@@ -111,12 +179,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-        Log.v("onSharedPreferenceCheck", "key: "+key);
-        Log.v ("onSharedPreferenceCheck", "preference: "+(getString(R.string.popularity_label)));
-
-
-
-
         if(key.equals(getString(R.string.pref_key))) {
             loadSortDisplayPreferences(sharedPreferences);
         }
@@ -124,4 +186,5 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
             return;
         }
     }
+
 }

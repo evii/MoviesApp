@@ -3,16 +3,29 @@ package com.example.android.moviesapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 /**
  * Created by evi on 25. 2. 2018.
  */
 
 public class Movie implements Parcelable {
 
+    @SerializedName("title")
     private String mTitle;
+
+    @SerializedName("release_date")
     private String mReleaseDate;
+
+    @SerializedName("vote_average")
     private double mVoteAverage;
+
+    @SerializedName("overview")
     private String mOverview;
+
+    @SerializedName("poster_path")
     private String mPosterPath;
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
@@ -32,6 +45,7 @@ public class Movie implements Parcelable {
         mVoteAverage = voteAverage;
         mOverview = overview;
         mPosterPath = "http://image.tmdb.org/t/p/w500/" + posterPath;
+
     }
 
     public Movie(Parcel in) {
@@ -74,5 +88,13 @@ public class Movie implements Parcelable {
         parcel.writeDouble(mVoteAverage);
         parcel.writeString(mOverview);
         parcel.writeString(mPosterPath);
+    }
+
+    public static class MovieResult {
+        private List<Movie> results;
+
+        public List<Movie> getResults() {
+            return results;
+        }
     }
 }
