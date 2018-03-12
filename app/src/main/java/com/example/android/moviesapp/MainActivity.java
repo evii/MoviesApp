@@ -1,14 +1,11 @@
 package com.example.android.moviesapp;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.ColorSpace;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.Preference;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +15,8 @@ import android.widget.GridView;
 
 
 import com.example.android.moviesapp.Settings.SettingsActivity;
+import com.example.android.moviesapp.data.Movie;
+import com.example.android.moviesapp.data.MoviesAdapter;
 import com.example.android.moviesapp.utilities.ApiClient;
 import com.example.android.moviesapp.utilities.ApiInterface;
 import java.util.List;

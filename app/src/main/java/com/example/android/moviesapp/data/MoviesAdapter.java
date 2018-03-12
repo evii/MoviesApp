@@ -1,4 +1,4 @@
-package com.example.android.moviesapp;
+package com.example.android.moviesapp.data;
 
 import android.content.Context;
 import android.view.View;
@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import com.example.android.moviesapp.data.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

@@ -67,5 +67,51 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/vote_tv"
             tools:text="Plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis, plot synopsis" />
+
+        <Button
+            android:id="@+id/button_trailer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Trailer"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/synopsis_tv" />
+
+        <Button
+            android:id="@+id/button_reviews"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Reviews"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/synopsis_tv" />
+
+        <Button
+            android:id="@+id/button_favorites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Add to favorites"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_trailer" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
     </android.support.constraint.ConstraintLayout>
+
+
 </ScrollView>

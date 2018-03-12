@@ -1,12 +1,16 @@
 package com.example.android.moviesapp;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.moviesapp.data.Movie;
 import com.squareup.picasso.Picasso;
 
 public class DetailActivity extends AppCompatActivity {
@@ -16,6 +20,10 @@ public class DetailActivity extends AppCompatActivity {
     private TextView releaseTV;
     private TextView voteTV;
     private TextView synopsisTV;
+    private Button trailerButton;
+    private Button reviewsButton;
+    private Button favoritesButton;
+    private Movie selectedMovie;
 
     private static final String LOG_TAG = "DetailActivity";
 
@@ -31,13 +39,16 @@ public class DetailActivity extends AppCompatActivity {
         releaseTV = findViewById(R.id.release_tv);
         voteTV = findViewById(R.id.vote_tv);
         synopsisTV = findViewById(R.id.synopsis_tv);
+        trailerButton = findViewById(R.id.button_trailer);
+        reviewsButton = findViewById(R.id.button_reviews);
+        favoritesButton = findViewById(R.id.button_favorites);
 
         Intent intent = getIntent();
         if (intent != null) {
             Bundle parcelableExtra = intent.getExtras();
             if (parcelableExtra != null) {
                 if (parcelableExtra.containsKey("selectedMovie")) {
-                    Movie selectedMovie = intent.getParcelableExtra("selectedMovie");
+                    selectedMovie = intent.getParcelableExtra("selectedMovie");
 
                     String title = selectedMovie.getTitle();
                     titleTV.setText(title);
@@ -64,6 +75,21 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             Log.i(LOG_TAG, "Intent is null.");
         }
+
+        reviewsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailActivity.this, ReviewsActivity.class);
+                intent.putExtra("selectedMovie", (Parcelable) selectedMovie);
+                startActivity(intent);
+            }
+        });
+
+
+
     }
+
+
+
 }
 
