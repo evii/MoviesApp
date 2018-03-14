@@ -29,6 +29,7 @@ public class Reviews {
     }
 
     public static class ReviewsResult {
+        @SerializedName("results")
         private List<Reviews> reviews;
 
         public List<Reviews> getReviewsList() {

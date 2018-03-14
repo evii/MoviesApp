@@ -3,15 +3,21 @@ package com.example.android.moviesapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.android.moviesapp.data.Movie;
 import com.example.android.moviesapp.data.MoviesAdapter;
 import com.example.android.moviesapp.data.Reviews;
+import com.example.android.moviesapp.data.ReviewsAdapter;
 import com.example.android.moviesapp.utilities.ApiClient;
 import com.example.android.moviesapp.utilities.ApiInterface;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -24,7 +30,11 @@ public class ReviewsActivity extends AppCompatActivity {
     private String API_KEY;
     private static final String TAG = "ReviewsActivityRetrofit";
 
-    @Override
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reviews);
@@ -32,9 +42,12 @@ public class ReviewsActivity extends AppCompatActivity {
         API_KEY = this.getResources().getString(R.string.API_key);
 
         Intent intent = getIntent();
-        Movie selectedMovie = intent.getParcelableExtra("selectedMovie");
-        movieId = selectedMovie.getId();
-
+        if (intent != null) {
+            Movie selectedMovie = intent.getParcelableExtra("selectedMovie");
+            movieId = selectedMovie.getId();
+        } else {
+            Log.e(TAG, "Intent is null");
+        }
         ApiInterface apiInterface =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -44,29 +57,27 @@ public class ReviewsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Reviews.ReviewsResult> call, Response<Reviews.ReviewsResult> response) {
                 List<Reviews> reviews = response.body().getReviewsList();
+                TextView noReviewsTv = findViewById(R.id.no_review_tv);
 
-                Log.v(TAG, "Number of reviews received: " + reviews.size());
+                if (reviews.size() == 0) {
+                    noReviewsTv.setVisibility(View.VISIBLE);
 
-                /*TextView reviewTv1 = findViewById(R.id.review1);
-                TextView reviewTv2 = findViewById(R.id.review2);
+                } else {
+                    noReviewsTv.setVisibility(View.INVISIBLE);
+                    recyclerView = findViewById(R.id.reviews_rec_view);
+                    mAdapter = new ReviewsAdapter(reviews);
+                    layoutManager = new LinearLayoutManager(getApplicationContext());
 
-                Reviews review1 = reviews.get(0);
-                String content1 = review1.getContent();
-                Reviews review2 = reviews.get(1);
-                String content2 = review2.getContent();
-
-                reviewTv1.setText(content1);
-                reviewTv2.setText(content2);*/
-
-
+                    recyclerView.setLayoutManager(layoutManager);
+                    recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView.setAdapter(mAdapter);
+                }
             }
 
             @Override
             public void onFailure(Call<Reviews.ReviewsResult> call, Throwable t) {
                 Log.e(TAG, t.toString());
             }
-
-
         });
     }
 }
