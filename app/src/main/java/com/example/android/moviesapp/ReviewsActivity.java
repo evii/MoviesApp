@@ -28,7 +28,7 @@ public class ReviewsActivity extends AppCompatActivity {
 
     private int movieId;
     private String API_KEY;
-    private static final String TAG = "ReviewsActivityRetrofit";
+    private static final String TAG = "ReviewsActivity";
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;

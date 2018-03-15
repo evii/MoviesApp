@@ -18,7 +18,6 @@ import java.util.List;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
 
-    private static final String TAG = ReviewsAdapter.class.getSimpleName();
     private List<Reviews> mReviews;
 
     public class ViewHolder extends RecyclerView.ViewHolder {

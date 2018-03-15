@@ -2,6 +2,7 @@ package com.example.android.moviesapp.utilities;
 
 import com.example.android.moviesapp.data.Movie;
 import com.example.android.moviesapp.data.Reviews;
+import com.example.android.moviesapp.data.Trailer;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -23,7 +24,7 @@ public interface ApiInterface {
    Call<Reviews.ReviewsResult> getMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
 
     @GET("movie/{id}/videos")
-    Call<Movie> getMovieTrailer(@Path("id") int id, @Query("api_key") String apiKey);
+    Call<Trailer.TrailersResults> getMovieTrailer(@Path("id") int id, @Query("api_key") String apiKey);
 }
 
 
