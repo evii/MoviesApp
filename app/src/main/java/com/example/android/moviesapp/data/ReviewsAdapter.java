@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
 
-    private List<Reviews> mReviews;
+        private List<Reviews> mReviews;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 

@@ -1,6 +1,8 @@
 package com.example.android.moviesapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,9 +11,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.moviesapp.data.Movie;
 import com.example.android.moviesapp.data.Reviews;
@@ -40,10 +48,11 @@ public class DetailActivity extends AppCompatActivity {
     private Movie selectedMovie;
     private int movieId;
     private String API_KEY;
+    private Context mContext;
 
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private ListView mListView;
+    private TrailerAdapter mAdapter;
+    private List<Trailer> trailers;
 
     private static final String LOG_TAG = "DetailActivity";
 
@@ -53,6 +62,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         posterIV = findViewById(R.id.poster_iv);
         titleTV = findViewById(R.id.title_tv);
@@ -118,17 +128,23 @@ public class DetailActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call<Trailer.TrailersResults> call, Response<Trailer.TrailersResults> response) {
-                List<Trailer> trailers = response.body().getTrailersResults();
-                Log.v(LOG_TAG,String.valueOf(trailers.size()));
+                trailers = response.body().getTrailersResults();
 
-                recyclerView = findViewById(R.id.trailers_rec_view);
-                mAdapter = new TrailerAdapter(trailers);
-                layoutManager = new LinearLayoutManager(getApplicationContext());
+                mListView = findViewById(R.id.trailers_list_view);
 
-                recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setItemAnimator(new DefaultItemAnimator());
-                recyclerView.setAdapter(mAdapter);
+                mAdapter = new TrailerAdapter(DetailActivity.this, trailers);
+                mListView.setAdapter(mAdapter);
+                justifyListViewHeightBasedOnChildren(mListView);
 
+                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Trailer trailerSelected = trailers.get(position);
+                        String url = trailerSelected.getmTrailerKey();
+                        Intent intentTrailer = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intentTrailer);
+                    }
+                });
             }
 
             @Override
@@ -136,8 +152,28 @@ public class DetailActivity extends AppCompatActivity {
                 Log.e(LOG_TAG, t.toString());
             }
         });
+    }
 
+    // resource: https://stackoverflow.com/questions/12212890/disable-scrolling-of-a-listview-contained-within-a-scrollview?noredirect=1&lq=1
+    public static void justifyListViewHeightBasedOnChildren(ListView listView) {
 
+        ListAdapter adapter = listView.getAdapter();
+
+        if (adapter == null) {
+            return;
+        }
+        ViewGroup vg = listView;
+        int totalHeight = 0;
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View listItem = adapter.getView(i, null, vg);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams par = listView.getLayoutParams();
+        par.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
+        listView.setLayoutParams(par);
+        listView.requestLayout();
     }
 }
 
