@@ -1,19 +1,15 @@
 package com.example.android.moviesapp;
 
-import android.content.Context;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -21,9 +17,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.moviesapp.DbData.FavoritesContract;
 import com.example.android.moviesapp.data.Movie;
-import com.example.android.moviesapp.data.Reviews;
-import com.example.android.moviesapp.data.ReviewsAdapter;
 import com.example.android.moviesapp.data.Trailer;
 import com.example.android.moviesapp.data.TrailerAdapter;
 import com.example.android.moviesapp.utilities.ApiClient;
@@ -48,13 +43,12 @@ public class DetailActivity extends AppCompatActivity {
     private Movie selectedMovie;
     private int movieId;
     private String API_KEY;
-    private Context mContext;
 
     private ListView mListView;
     private TrailerAdapter mAdapter;
     private List<Trailer> trailers;
 
-    private static final String LOG_TAG = "DetailActivity";
+    private static final String LOG_TAG = "DetailActivityFav";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,9 +146,28 @@ public class DetailActivity extends AppCompatActivity {
                 Log.e(LOG_TAG, t.toString());
             }
         });
+
+        // Favorites:
+        favoritesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContentValues contentValues = new ContentValues();
+                int movieId = selectedMovie.getId();
+                String title = selectedMovie.getTitle();
+                String posterUrl = selectedMovie.getPosterPath();
+                contentValues.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, movieId);
+                contentValues.put(FavoritesContract.FavoritesEntry.COLUMNN_TITLE, title);
+                contentValues.put(FavoritesContract.FavoritesEntry.COLUMN_POSTER_URL, posterUrl);
+                Uri uri = getContentResolver().insert(FavoritesContract.FavoritesEntry.CONTENT_URI, contentValues);
+
+                Toast.makeText(getBaseContext(), "Movie " + title + " was added to favorites.",Toast.LENGTH_LONG).show();
+            }
+        });
+
+
     }
 
-    // resource: https://stackoverflow.com/questions/12212890/disable-scrolling-of-a-listview-contained-within-a-scrollview?noredirect=1&lq=1
+    // Helper method for trailers listView display. Resource: https://stackoverflow.com/questions/12212890/disable-scrolling-of-a-listview-contained-within-a-scrollview?noredirect=1&lq=1
     public static void justifyListViewHeightBasedOnChildren(ListView listView) {
 
         ListAdapter adapter = listView.getAdapter();
