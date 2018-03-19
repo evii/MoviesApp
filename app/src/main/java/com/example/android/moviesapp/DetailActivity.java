@@ -4,9 +4,11 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +22,8 @@ import android.widget.Toast;
 
 import com.example.android.moviesapp.DbData.FavoritesContract;
 import com.example.android.moviesapp.data.Movie;
-import com.example.android.moviesapp.data.MoviesAdapter;
+import com.example.android.moviesapp.data.Reviews;
+import com.example.android.moviesapp.data.ReviewsAdapter;
 import com.example.android.moviesapp.data.Trailer;
 import com.example.android.moviesapp.data.TrailerAdapter;
 import com.example.android.moviesapp.utilities.ApiClient;
@@ -46,10 +49,16 @@ public class DetailActivity extends AppCompatActivity {
     private Movie selectedMovie;
     private int movieId;
     private String API_KEY;
+    String movieTitle;
 
     private ListView mListView;
     private TrailerAdapter mAdapter;
     private List<Trailer> trailers;
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mRecAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
 
     private static final String LOG_TAG = "DetailActivityFav";
 
@@ -66,10 +75,10 @@ public class DetailActivity extends AppCompatActivity {
         releaseTV = findViewById(R.id.release_tv);
         voteTV = findViewById(R.id.vote_tv);
         synopsisTV = findViewById(R.id.synopsis_tv);
-        reviewsButton = findViewById(R.id.button_reviews);
         addFavoritesButton = findViewById(R.id.button_add_favorites);
         removeFavoritesButton = findViewById(R.id.button_remove_favorites);
         API_KEY = this.getResources().getString(R.string.API_key);
+
 
         // Movie details:
         Intent intent = getIntent();
@@ -83,14 +92,14 @@ public class DetailActivity extends AppCompatActivity {
                     ApiInterface apiInterface =
                             ApiClient.getClient().create(ApiInterface.class);
 
-                    Call<Movie> call = apiInterface.getMovieDetail(movieId, API_KEY);
-                    call.enqueue(new Callback<Movie>() {
+                    Call<Movie> movieDetailCall = apiInterface.getMovieDetail(movieId, API_KEY);
+                    movieDetailCall.enqueue(new Callback<Movie>() {
 
                         @Override
                         public void onResponse(Call<Movie> call, Response<Movie> response) {
-                            String title = response.body().getTitle();
-                            titleTV.setText(title);
-                            setTitle(title);
+                            movieTitle = response.body().getTitle();
+                            titleTV.setText(movieTitle);
+                            setTitle(movieTitle);
 
                             String releaseDate =  response.body().getReleaseDate();
                             releaseTV.setText(releaseDate);
@@ -124,22 +133,44 @@ public class DetailActivity extends AppCompatActivity {
 
 
         // Reviews:
-        reviewsButton.setOnClickListener(new View.OnClickListener() {
+        movieId = selectedMovie.getId();
+        ApiInterface apiInterface =
+                ApiClient.getClient().create(ApiInterface.class);
+
+        Call<Reviews.ReviewsResult> reviewsCall = apiInterface.getMovieReviews(movieId, API_KEY);
+        reviewsCall.enqueue(new Callback<Reviews.ReviewsResult>() {
+
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DetailActivity.this, ReviewsActivity.class);
-                intent.putExtra("selectedMovie", (Parcelable) selectedMovie);
-                startActivity(intent);
+            public void onResponse(Call<Reviews.ReviewsResult> call, Response<Reviews.ReviewsResult> response) {
+                List<Reviews> reviews = response.body().getReviewsList();
+                TextView noReviewsTv = findViewById(R.id.no_review_tv);
+
+                if (reviews.size() == 0) {
+                    noReviewsTv.setVisibility(View.VISIBLE);
+
+                } else {
+                    noReviewsTv.setVisibility(View.INVISIBLE);
+                    recyclerView = findViewById(R.id.reviews_rec_view);
+                    mRecAdapter = new ReviewsAdapter(reviews);
+                    layoutManager = new LinearLayoutManager(getApplicationContext());
+
+                    recyclerView.setLayoutManager(layoutManager);
+                    recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView.setAdapter(mRecAdapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Reviews.ReviewsResult> call, Throwable t) {
+                Log.e(LOG_TAG, t.toString());
             }
         });
 
 
+
         //Trailers:
-        ApiInterface apiInterface =
-                ApiClient.getClient().create(ApiInterface.class);
-        movieId = selectedMovie.getId();
-        Call<Trailer.TrailersResults> call = apiInterface.getMovieTrailer(movieId, API_KEY);
-        call.enqueue(new Callback<Trailer.TrailersResults>() {
+        Call<Trailer.TrailersResults> trailerCall = apiInterface.getMovieTrailer(movieId, API_KEY);
+        trailerCall.enqueue(new Callback<Trailer.TrailersResults>() {
 
             @Override
             public void onResponse(Call<Trailer.TrailersResults> call, Response<Trailer.TrailersResults> response) {
@@ -173,16 +204,14 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ContentValues contentValues = new ContentValues();
-
-                String title = selectedMovie.getTitle();
                 String posterUrl = selectedMovie.getPosterPath();
                 movieId = selectedMovie.getId();
                 contentValues.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, movieId);
-                contentValues.put(FavoritesContract.FavoritesEntry.COLUMNN_TITLE, title);
+                contentValues.put(FavoritesContract.FavoritesEntry.COLUMNN_TITLE, movieTitle);
                 contentValues.put(FavoritesContract.FavoritesEntry.COLUMN_POSTER_URL, posterUrl);
                 Uri uri = getContentResolver().insert(FavoritesContract.FavoritesEntry.CONTENT_URI, contentValues);
                 Log.v(LOG_TAG, "Added: " + uri.toString());
-                Toast.makeText(getBaseContext(), "Movie " + title + " was added to favorites.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Movie " + movieTitle + " was added to favorites.", Toast.LENGTH_LONG).show();
                 addFavoritesButton.setVisibility(View.INVISIBLE);
                 removeFavoritesButton.setVisibility(View.VISIBLE);
             }
@@ -199,8 +228,7 @@ public class DetailActivity extends AppCompatActivity {
 
                 taskDeleted = getContentResolver().delete(uri, selection, selectionArgs);
                 Log.v(LOG_TAG, "removed: " + String.valueOf(taskDeleted));
-                String title = selectedMovie.getTitle();
-                Toast.makeText(getBaseContext(), "Movie " + title + " was removed from favorites.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Movie " + movieTitle + " was removed from favorites.", Toast.LENGTH_LONG).show();
                 addFavoritesButton.setVisibility(View.VISIBLE);
                 removeFavoritesButton.setVisibility(View.INVISIBLE);
             }

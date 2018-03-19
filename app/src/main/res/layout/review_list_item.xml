@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/author_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Author"
-        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
-        android:textSize="24sp"
+        android:paddingBottom="8dp"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
+        tools:text="Author"
+        android:textStyle="bold"/>
+
     <TextView
         android:id="@+id/review_content_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+
         android:paddingBottom="16dp"
-        tools:text="review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review "/>
-<ImageView
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:background="@color/colorPrimary"/>
+        tools:text="review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review review " />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary" />
 
 </LinearLayout>

@@ -37,13 +37,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".ReviewsActivity"
-            android:label="@string/reviews"
-            android:parentActivityName=".DetailActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DetailActivity" />
-        </activity>
+
         <provider
             android:authorities="com.example.android.moviesapp"
             android:name="com.example.android.moviesapp.DbData.FavoritesContentProvider"
