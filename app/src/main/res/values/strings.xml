@@ -12,7 +12,6 @@
     <string name="popularity_label">Popularity</string>
     <string name="highest_rated_label">HighestRated</string>
     <string name="favorites_label">Favorites</string>
-
     <string name="pref_key">sort_by</string>
 
     <string name="detail_activity">Details</string>
