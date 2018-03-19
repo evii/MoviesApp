@@ -17,12 +17,14 @@ import android.support.annotation.Nullable;
 
 public class FavoritesContentProvider extends ContentProvider {
     public static final int FAVORITES = 100;
+    public static final int FAVORITES_ID = 101;
     private FavoritesDbHelper mDbHelper;
     private static final UriMatcher sUriMatcher = buildUriMathcher();
 
     public static UriMatcher buildUriMathcher() {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(FavoritesContract.AUTHORITY, FavoritesContract.PATH_FAVORITES, FAVORITES);
+        uriMatcher.addURI(FavoritesContract.AUTHORITY, FavoritesContract.PATH_FAVORITES + "/#", FAVORITES_ID);
         return uriMatcher;
     }
 
@@ -36,8 +38,24 @@ public class FavoritesContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
-        return null;
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
+                        @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        int match = sUriMatcher.match(uri);
+        Cursor returnCursor;
+
+        switch (match) {
+            case FAVORITES:
+                returnCursor = db.query(FavoritesContract.FavoritesEntry.TABLE_NAME,
+                        projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri " + uri);
+        }
+       returnCursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        return returnCursor;
     }
 
     @Nullable
@@ -69,8 +87,28 @@ public class FavoritesContentProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        int match = sUriMatcher.match(uri);
+        int tasksDeleted;
+
+        switch (match) {
+            case FAVORITES:
+                //String id = uri.getPathSegments().get(1);
+                tasksDeleted = db.delete(FavoritesContract.FavoritesEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        if (tasksDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return tasksDeleted;
+
     }
 
     @Override

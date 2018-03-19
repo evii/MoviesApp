@@ -2,6 +2,7 @@ package com.example.android.moviesapp;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.android.moviesapp.DbData.FavoritesContract;
 import com.example.android.moviesapp.data.Movie;
+import com.example.android.moviesapp.data.MoviesAdapter;
 import com.example.android.moviesapp.data.Trailer;
 import com.example.android.moviesapp.data.TrailerAdapter;
 import com.example.android.moviesapp.utilities.ApiClient;
@@ -39,7 +41,8 @@ public class DetailActivity extends AppCompatActivity {
     private TextView voteTV;
     private TextView synopsisTV;
     private Button reviewsButton;
-    private Button favoritesButton;
+    private Button addFavoritesButton;
+    private Button removeFavoritesButton;
     private Movie selectedMovie;
     private int movieId;
     private String API_KEY;
@@ -64,7 +67,8 @@ public class DetailActivity extends AppCompatActivity {
         voteTV = findViewById(R.id.vote_tv);
         synopsisTV = findViewById(R.id.synopsis_tv);
         reviewsButton = findViewById(R.id.button_reviews);
-        favoritesButton = findViewById(R.id.button_favorites);
+        addFavoritesButton = findViewById(R.id.button_add_favorites);
+        removeFavoritesButton = findViewById(R.id.button_remove_favorites);
         API_KEY = this.getResources().getString(R.string.API_key);
 
         // Movie details:
@@ -75,19 +79,36 @@ public class DetailActivity extends AppCompatActivity {
                 if (parcelableExtra.containsKey("selectedMovie")) {
                     selectedMovie = intent.getParcelableExtra("selectedMovie");
 
-                    String title = selectedMovie.getTitle();
-                    titleTV.setText(title);
-                    setTitle(title);
+                    int movieId = selectedMovie.getId();
+                    ApiInterface apiInterface =
+                            ApiClient.getClient().create(ApiInterface.class);
 
-                    String releaseDate = selectedMovie.getReleaseDate();
-                    releaseTV.setText(releaseDate);
+                    Call<Movie> call = apiInterface.getMovieDetail(movieId, API_KEY);
+                    call.enqueue(new Callback<Movie>() {
 
-                    Double vote = selectedMovie.getVote();
-                    String voteString = vote.toString();
-                    voteTV.setText(voteString);
+                        @Override
+                        public void onResponse(Call<Movie> call, Response<Movie> response) {
+                            String title = response.body().getTitle();
+                            titleTV.setText(title);
+                            setTitle(title);
 
-                    String synopsis = selectedMovie.getOverview();
-                    synopsisTV.setText(synopsis);
+                            String releaseDate =  response.body().getReleaseDate();
+                            releaseTV.setText(releaseDate);
+
+                            Double vote =  response.body().getVote();
+                            String voteString = vote.toString();
+                            voteTV.setText(voteString);
+
+                            String synopsis =  response.body().getOverview();
+                            synopsisTV.setText(synopsis);
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<Movie> call, Throwable t) {
+                            Log.e(LOG_TAG, t.toString());
+                        }
+                    });
 
                     String posterUrl = selectedMovie.getPosterPath();
                     Picasso.with(this).load(posterUrl).into(posterIV);
@@ -101,6 +122,7 @@ public class DetailActivity extends AppCompatActivity {
             Log.i(LOG_TAG, "Intent is null.");
         }
 
+
         // Reviews:
         reviewsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,10 +135,9 @@ public class DetailActivity extends AppCompatActivity {
 
 
         //Trailers:
-        movieId = selectedMovie.getId();
         ApiInterface apiInterface =
                 ApiClient.getClient().create(ApiInterface.class);
-
+        movieId = selectedMovie.getId();
         Call<Trailer.TrailersResults> call = apiInterface.getMovieTrailer(movieId, API_KEY);
         call.enqueue(new Callback<Trailer.TrailersResults>() {
 
@@ -148,23 +169,57 @@ public class DetailActivity extends AppCompatActivity {
         });
 
         // Favorites:
-        favoritesButton.setOnClickListener(new View.OnClickListener() {
+        addFavoritesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ContentValues contentValues = new ContentValues();
-                int movieId = selectedMovie.getId();
+
                 String title = selectedMovie.getTitle();
                 String posterUrl = selectedMovie.getPosterPath();
+                movieId = selectedMovie.getId();
                 contentValues.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, movieId);
                 contentValues.put(FavoritesContract.FavoritesEntry.COLUMNN_TITLE, title);
                 contentValues.put(FavoritesContract.FavoritesEntry.COLUMN_POSTER_URL, posterUrl);
                 Uri uri = getContentResolver().insert(FavoritesContract.FavoritesEntry.CONTENT_URI, contentValues);
-
-                Toast.makeText(getBaseContext(), "Movie " + title + " was added to favorites.",Toast.LENGTH_LONG).show();
+                Log.v(LOG_TAG, "Added: " + uri.toString());
+                Toast.makeText(getBaseContext(), "Movie " + title + " was added to favorites.", Toast.LENGTH_LONG).show();
+                addFavoritesButton.setVisibility(View.INVISIBLE);
+                removeFavoritesButton.setVisibility(View.VISIBLE);
             }
         });
 
+        removeFavoritesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int taskDeleted;
+                String selection = "movieId=?";
+                movieId = selectedMovie.getId();
+                String[] selectionArgs = new String[]{String.valueOf(movieId)};
+                Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
 
+                taskDeleted = getContentResolver().delete(uri, selection, selectionArgs);
+                Log.v(LOG_TAG, "removed: " + String.valueOf(taskDeleted));
+                String title = selectedMovie.getTitle();
+                Toast.makeText(getBaseContext(), "Movie " + title + " was removed from favorites.", Toast.LENGTH_LONG).show();
+                addFavoritesButton.setVisibility(View.VISIBLE);
+                removeFavoritesButton.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        // Test what button to display
+        String selection = "movieId=?";
+        movieId = selectedMovie.getId();
+        String[] selectionArgs = new String[]{String.valueOf(movieId)};
+        Cursor cursor = getContentResolver().query(FavoritesContract.FavoritesEntry.CONTENT_URI, null, selection, selectionArgs, null);
+        if (cursor.getCount() == 0) {
+            addFavoritesButton.setVisibility(View.VISIBLE);
+            removeFavoritesButton.setVisibility(View.INVISIBLE);
+        } else if (cursor.getCount() > 0) {
+            addFavoritesButton.setVisibility(View.INVISIBLE);
+            removeFavoritesButton.setVisibility(View.VISIBLE);
+        } else {
+            Log.v(LOG_TAG, "Error with checking if the movie is already marked as favorite.");
+        }
     }
 
     // Helper method for trailers listView display. Resource: https://stackoverflow.com/questions/12212890/disable-scrolling-of-a-listview-contained-within-a-scrollview?noredirect=1&lq=1

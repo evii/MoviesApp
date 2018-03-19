@@ -2,6 +2,7 @@ package com.example.android.moviesapp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,24 +15,30 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 
+import com.example.android.moviesapp.DbData.FavoritesContract;
 import com.example.android.moviesapp.Settings.SettingsActivity;
 import com.example.android.moviesapp.data.Movie;
 import com.example.android.moviesapp.data.MoviesAdapter;
 import com.example.android.moviesapp.utilities.ApiClient;
 import com.example.android.moviesapp.utilities.ApiInterface;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
+
+// TODO back button from DetailActivity
+
+public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private MoviesAdapter moviesAdapter;
     private GridView gridView;
     public List<Movie> mMovies;
     private String API_KEY;
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MainActivityFavMovies";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,11 +113,36 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 
         } else if (preferenceSelected.equals(getString(R.string.favorites_label))) {
-            return;
+            Cursor cursor = getContentResolver().query(FavoritesContract.FavoritesEntry.CONTENT_URI, null, null, null, null);
+            int cursorLength = cursor.getCount();
+            cursor.moveToFirst();
+            String posterPath;
+            int movieId;
+            List<Movie> favMovies = new ArrayList<>();
+
+            for (int i = 1; i <= cursorLength; i++) {
+                posterPath = cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_POSTER_URL));
+                movieId = cursor.getInt(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID));
+
+                favMovies.add(new Movie(posterPath, movieId));
+                cursor.moveToNext();
+            }
+            cursor.close();
+            Log.v(TAG, String.valueOf(favMovies.size()));
+            mMovies = favMovies;
+            Movie movie1 = favMovies.get(0);
+            String url = movie1.getPosterPath();
+            Log.v(TAG,url);
+            moviesAdapter = new MoviesAdapter(MainActivity.this, mMovies);
+            gridView.setAdapter(moviesAdapter);
+
+
         } else {
             return;
         }
+
     }
+
 
     @Override
     protected void onDestroy() {
@@ -140,12 +172,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-        if(key.equals(getString(R.string.pref_key))) {
+        if (key.equals(getString(R.string.pref_key))) {
             loadSortDisplayPreferences(sharedPreferences);
-        }
-        else{
+        } else {
             return;
         }
+    }
+     // refreshing grid after going back from detail activity - ensures correct display of favorites.
+    @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        loadSortDisplayPreferences(sharedPreferences);
     }
 
 }

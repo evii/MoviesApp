@@ -32,7 +32,6 @@ public class Movie implements Parcelable {
     private int mId;
 
 
-
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         public Movie createFromParcel(Parcel in) {
             return new Movie(in);
@@ -51,7 +50,11 @@ public class Movie implements Parcelable {
         mOverview = overview;
         mPosterPath = posterPath;
         mId = id;
+    }
 
+    public Movie(String posterPath, int id) {
+        mPosterPath = posterPath;
+        mId = id;
     }
 
     public Movie(Parcel in) {
@@ -80,7 +83,11 @@ public class Movie implements Parcelable {
     }
 
     public String getPosterPath() {
-        return "http://image.tmdb.org/t/p/w500/" + mPosterPath;
+        if (mPosterPath.startsWith("http://image.tmdb.org/t/p/")) {
+            return mPosterPath;
+        } else {
+            return "http://image.tmdb.org/t/p/w500/" + mPosterPath;
+        }
     }
 
     public int getId() {

@@ -88,16 +88,28 @@
                 app:layout_constraintTop_toBottomOf="@+id/synopsis_tv" />
 
             <Button
-                android:id="@+id/button_favorites"
+                android:id="@+id/button_add_favorites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-
                 android:layout_marginStart="8dp"
-                android:text="Add to favorites"
+                android:text="@string/add_favorites"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="@+id/button_reviews" />
+
+            <Button
+                android:id="@+id/button_remove_favorites"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/remove_favorites"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="@+id/button_reviews"
+                android:visibility="invisible"
+                />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline"
