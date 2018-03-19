@@ -33,9 +33,9 @@ public class Trailer {
         @SerializedName("results")
         private List<Trailer> trailersResults;
 
-public List<Trailer> getTrailersResults(){
-    return trailersResults;
-}
+        public List<Trailer> getTrailersResults() {
+            return trailersResults;
+        }
     }
 
 }

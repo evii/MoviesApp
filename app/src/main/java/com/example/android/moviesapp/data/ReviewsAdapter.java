@@ -1,8 +1,6 @@
 package com.example.android.moviesapp.data;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,7 @@ import java.util.List;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
 
-        private List<Reviews> mReviews;
+    private List<Reviews> mReviews;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -52,7 +50,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-            Reviews reviewItem = mReviews.get(position);
+        Reviews reviewItem = mReviews.get(position);
         String author = reviewItem.getAuthor();
         String content = reviewItem.getContent();
         holder.authorTv.setText(author);

@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-
 import com.example.android.moviesapp.DbData.FavoritesContract;
 import com.example.android.moviesapp.Settings.SettingsActivity;
 import com.example.android.moviesapp.data.Movie;
@@ -30,8 +29,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-// TODO back button from DetailActivity
-
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private MoviesAdapter moviesAdapter;
@@ -39,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     public List<Movie> mMovies;
     private String API_KEY;
     private static final String TAG = "MainActivityFavMovies";
+    private ApiInterface apiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         gridView = findViewById(R.id.gridview);
         API_KEY = this.getResources().getString(R.string.API_key);
+        apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
 // setting onItemClickListener on the items in gridview
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -69,11 +68,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         if (preferenceSelected.equals(getString(R.string.popularity_label))) {
 
-            ApiInterface apiInterface =
-                    ApiClient.getClient().create(ApiInterface.class);
-
-            Call<Movie.MovieResult> call = apiInterface.getPopularMovies(API_KEY);
-            call.enqueue(new Callback<Movie.MovieResult>() {
+            Call<Movie.MovieResult> popularMoviesCall = apiInterface.getPopularMovies(API_KEY);
+            popularMoviesCall.enqueue(new Callback<Movie.MovieResult>() {
 
                 @Override
                 public void onResponse(Call<Movie.MovieResult> call, Response<Movie.MovieResult> response) {
@@ -91,11 +87,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         } else if (preferenceSelected.equals(getString(R.string.highest_rated_label))) {
 
-            ApiInterface apiInterface =
-                    ApiClient.getClient().create(ApiInterface.class);
-
-            Call<Movie.MovieResult> call = apiInterface.getTopRatedMovies(API_KEY);
-            call.enqueue(new Callback<Movie.MovieResult>() {
+            Call<Movie.MovieResult> ratedMoviesCall = apiInterface.getTopRatedMovies(API_KEY);
+            ratedMoviesCall.enqueue(new Callback<Movie.MovieResult>() {
 
                 @Override
                 public void onResponse(Call<Movie.MovieResult> call, Response<Movie.MovieResult> response) {
@@ -111,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 }
             });
 
-
         } else if (preferenceSelected.equals(getString(R.string.favorites_label))) {
             Cursor cursor = getContentResolver().query(FavoritesContract.FavoritesEntry.CONTENT_URI, null, null, null, null);
             int cursorLength = cursor.getCount();
@@ -123,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             for (int i = 1; i <= cursorLength; i++) {
                 posterPath = cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_POSTER_URL));
                 movieId = cursor.getInt(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID));
-
                 favMovies.add(new Movie(posterPath, movieId));
                 cursor.moveToNext();
             }
@@ -132,17 +123,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             mMovies = favMovies;
             Movie movie1 = favMovies.get(0);
             String url = movie1.getPosterPath();
-            Log.v(TAG,url);
+            Log.v(TAG, url);
             moviesAdapter = new MoviesAdapter(MainActivity.this, mMovies);
             gridView.setAdapter(moviesAdapter);
-
 
         } else {
             return;
         }
-
     }
-
 
     @Override
     protected void onDestroy() {
@@ -178,13 +166,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             return;
         }
     }
-     // refreshing grid after going back from detail activity - ensures correct display of favorites.
+
+    // refreshing grid after going back from detail activity - ensures correct display of favorites.
     @Override
-    public void onResume()
-    {  // After a pause OR at startup
+    public void onResume() {  // After a pause OR at startup
         super.onResume();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         loadSortDisplayPreferences(sharedPreferences);
     }
-
 }

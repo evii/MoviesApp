@@ -28,7 +28,6 @@ public class FavoritesContentProvider extends ContentProvider {
         return uriMatcher;
     }
 
-
     @Override
     public boolean onCreate() {
         Context context = getContext();
@@ -53,7 +52,7 @@ public class FavoritesContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri " + uri);
         }
-       returnCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        returnCursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         return returnCursor;
     }
@@ -96,7 +95,6 @@ public class FavoritesContentProvider extends ContentProvider {
 
         switch (match) {
             case FAVORITES:
-                //String id = uri.getPathSegments().get(1);
                 tasksDeleted = db.delete(FavoritesContract.FavoritesEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
@@ -108,7 +106,6 @@ public class FavoritesContentProvider extends ContentProvider {
         }
 
         return tasksDeleted;
-
     }
 
     @Override

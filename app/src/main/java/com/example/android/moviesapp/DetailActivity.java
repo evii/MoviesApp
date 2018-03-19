@@ -43,7 +43,6 @@ public class DetailActivity extends AppCompatActivity {
     private TextView releaseTV;
     private TextView voteTV;
     private TextView synopsisTV;
-    private Button reviewsButton;
     private Button addFavoritesButton;
     private Button removeFavoritesButton;
     private Movie selectedMovie;
@@ -58,6 +57,7 @@ public class DetailActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mRecAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    ApiInterface apiInterface;
 
 
     private static final String LOG_TAG = "DetailActivityFav";
@@ -69,7 +69,6 @@ public class DetailActivity extends AppCompatActivity {
 
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         posterIV = findViewById(R.id.poster_iv);
         titleTV = findViewById(R.id.title_tv);
         releaseTV = findViewById(R.id.release_tv);
@@ -78,6 +77,7 @@ public class DetailActivity extends AppCompatActivity {
         addFavoritesButton = findViewById(R.id.button_add_favorites);
         removeFavoritesButton = findViewById(R.id.button_remove_favorites);
         API_KEY = this.getResources().getString(R.string.API_key);
+        apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
 
         // Movie details:
@@ -89,8 +89,6 @@ public class DetailActivity extends AppCompatActivity {
                     selectedMovie = intent.getParcelableExtra("selectedMovie");
 
                     int movieId = selectedMovie.getId();
-                    ApiInterface apiInterface =
-                            ApiClient.getClient().create(ApiInterface.class);
 
                     Call<Movie> movieDetailCall = apiInterface.getMovieDetail(movieId, API_KEY);
                     movieDetailCall.enqueue(new Callback<Movie>() {
@@ -101,16 +99,15 @@ public class DetailActivity extends AppCompatActivity {
                             titleTV.setText(movieTitle);
                             setTitle(movieTitle);
 
-                            String releaseDate =  response.body().getReleaseDate();
+                            String releaseDate = response.body().getReleaseDate();
                             releaseTV.setText(releaseDate);
 
-                            Double vote =  response.body().getVote();
+                            Double vote = response.body().getVote();
                             String voteString = vote.toString();
                             voteTV.setText(voteString);
 
-                            String synopsis =  response.body().getOverview();
+                            String synopsis = response.body().getOverview();
                             synopsisTV.setText(synopsis);
-
                         }
 
                         @Override
@@ -131,12 +128,8 @@ public class DetailActivity extends AppCompatActivity {
             Log.i(LOG_TAG, "Intent is null.");
         }
 
-
         // Reviews:
         movieId = selectedMovie.getId();
-        ApiInterface apiInterface =
-                ApiClient.getClient().create(ApiInterface.class);
-
         Call<Reviews.ReviewsResult> reviewsCall = apiInterface.getMovieReviews(movieId, API_KEY);
         reviewsCall.enqueue(new Callback<Reviews.ReviewsResult>() {
 
@@ -165,8 +158,6 @@ public class DetailActivity extends AppCompatActivity {
                 Log.e(LOG_TAG, t.toString());
             }
         });
-
-
 
         //Trailers:
         Call<Trailer.TrailersResults> trailerCall = apiInterface.getMovieTrailer(movieId, API_KEY);
@@ -252,7 +243,6 @@ public class DetailActivity extends AppCompatActivity {
 
     // Helper method for trailers listView display. Resource: https://stackoverflow.com/questions/12212890/disable-scrolling-of-a-listview-contained-within-a-scrollview?noredirect=1&lq=1
     public static void justifyListViewHeightBasedOnChildren(ListView listView) {
-
         ListAdapter adapter = listView.getAdapter();
 
         if (adapter == null) {
