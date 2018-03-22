@@ -108,6 +108,7 @@
         </android.support.constraint.ConstraintLayout>
 
         <TextView
+            android:id="@+id/trailers_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
@@ -129,6 +130,7 @@
 
         </ListView>
         <TextView
+            android:id="@+id/reviews_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"

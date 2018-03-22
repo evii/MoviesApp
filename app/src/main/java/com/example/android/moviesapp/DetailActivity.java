@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -59,8 +60,10 @@ public class DetailActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     ApiInterface apiInterface;
 
-
     private static final String LOG_TAG = "DetailActivityFav";
+    private static final String BUNDLE_RECYCLER_VIEW = "bundleRecyclerView";
+    private Parcelable mSavedRecyclerLayoutState;
+    int mLastFirstVisiblePosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +133,10 @@ public class DetailActivity extends AppCompatActivity {
 
         // Reviews:
         movieId = selectedMovie.getId();
+        if (savedInstanceState != null) {
+            mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_VIEW);
+        }
+
         Call<Reviews.ReviewsResult> reviewsCall = apiInterface.getMovieReviews(movieId, API_KEY);
         reviewsCall.enqueue(new Callback<Reviews.ReviewsResult>() {
 
@@ -150,7 +157,12 @@ public class DetailActivity extends AppCompatActivity {
                     recyclerView.setLayoutManager(layoutManager);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
                     recyclerView.setAdapter(mRecAdapter);
+
+                    recyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
+
                 }
+
+
             }
 
             @Override
@@ -239,6 +251,21 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             Log.v(LOG_TAG, "Error with checking if the movie is already marked as favorite.");
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(BUNDLE_RECYCLER_VIEW, recyclerView.getLayoutManager().onSaveInstanceState());
+    }
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState != null)
+        { mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_VIEW);}
+
     }
 
     // Helper method for trailers listView display. Resource: https://stackoverflow.com/questions/12212890/disable-scrolling-of-a-listview-contained-within-a-scrollview?noredirect=1&lq=1

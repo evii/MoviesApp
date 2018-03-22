@@ -35,8 +35,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private GridView gridView;
     public List<Movie> mMovies;
     private String API_KEY;
-    private static final String TAG = "MainActivityFavMovies";
+    private static final String TAG = "MainActivity";
     private ApiInterface apiInterface;
+    private int mCurrentPosition;
+    private static final String STATE_POSITION = "statePosition";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         gridView = findViewById(R.id.gridview);
         API_KEY = this.getResources().getString(R.string.API_key);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
+
 
 // setting onItemClickListener on the items in gridview
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -62,6 +65,22 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         loadSortDisplayPreferences(sharedPreferences);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        mCurrentPosition = gridView.getLastVisiblePosition();
+
+        savedInstanceState.putInt(STATE_POSITION, mCurrentPosition);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mCurrentPosition = savedInstanceState.getInt(STATE_POSITION);
+
+    }
+
+
     private void loadSortDisplayPreferences(SharedPreferences sharedPreferences) {
         String preferenceSelected = sharedPreferences.getString(getString(R.string.pref_key), getString(R.string.popularity_label));
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -77,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     mMovies = movies;
                     moviesAdapter = new MoviesAdapter(MainActivity.this, movies);
                     gridView.setAdapter(moviesAdapter);
+                    gridView.smoothScrollToPosition(mCurrentPosition);
                 }
 
                 @Override
@@ -96,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     mMovies = movies;
                     moviesAdapter = new MoviesAdapter(MainActivity.this, movies);
                     gridView.setAdapter(moviesAdapter);
+                    gridView.smoothScrollToPosition(mCurrentPosition);
                 }
 
                 @Override
@@ -119,13 +140,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 cursor.moveToNext();
             }
             cursor.close();
-            Log.v(TAG, String.valueOf(favMovies.size()));
             mMovies = favMovies;
             Movie movie1 = favMovies.get(0);
             String url = movie1.getPosterPath();
-            Log.v(TAG, url);
             moviesAdapter = new MoviesAdapter(MainActivity.this, mMovies);
             gridView.setAdapter(moviesAdapter);
+            gridView.smoothScrollToPosition(mCurrentPosition);
 
         } else {
             return;
