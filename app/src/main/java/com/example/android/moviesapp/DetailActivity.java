@@ -158,11 +158,11 @@ public class DetailActivity extends AppCompatActivity {
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
                     recyclerView.setAdapter(mRecAdapter);
 
-                    recyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
-
+                    //restore recycler view position
+                    if (mSavedRecyclerLayoutState != null) {
+                        recyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
+                    }
                 }
-
-
             }
 
             @Override
@@ -257,6 +257,8 @@ public class DetailActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(BUNDLE_RECYCLER_VIEW, recyclerView.getLayoutManager().onSaveInstanceState());
+
+
     }
 
 
