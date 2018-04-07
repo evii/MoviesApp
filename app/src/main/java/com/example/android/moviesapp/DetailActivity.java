@@ -1,10 +1,22 @@
 package com.example.android.moviesapp;
 
+
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcelable;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+
+
+
+
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -63,14 +75,21 @@ public class DetailActivity extends AppCompatActivity {
     private static final String LOG_TAG = "DetailActivityFav";
     private static final String BUNDLE_RECYCLER_VIEW = "bundleRecyclerView";
     private Parcelable mSavedRecyclerLayoutState;
-    int mLastFirstVisiblePosition;
+
+    FragmentPagerAdapter adapterViewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        ViewPager vpPager = findViewById(R.id.vpPager);
+        adapterViewPager = new DetailMoviePagerAdapter(this, getSupportFragmentManager());
+        vpPager.setAdapter(adapterViewPager);
+
+        /*this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         posterIV = findViewById(R.id.poster_iv);
         titleTV = findViewById(R.id.title_tv);
@@ -157,6 +176,7 @@ public class DetailActivity extends AppCompatActivity {
                     recyclerView.setLayoutManager(layoutManager);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
                     recyclerView.setAdapter(mRecAdapter);
+                    recyclerView.setNestedScrollingEnabled(false);
 
                     //restore recycler view position
                     if (mSavedRecyclerLayoutState != null) {
@@ -251,9 +271,10 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             Log.v(LOG_TAG, "Error with checking if the movie is already marked as favorite.");
         }
+        */
     }
 
-    @Override
+   /* @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(BUNDLE_RECYCLER_VIEW, recyclerView.getLayoutManager().onSaveInstanceState());
@@ -266,7 +287,8 @@ public class DetailActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if(savedInstanceState != null)
-        { mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_VIEW);}
+        { mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_VIEW);
+            }
 
     }
 
@@ -289,6 +311,49 @@ public class DetailActivity extends AppCompatActivity {
         par.height = totalHeight + (listView.getDividerHeight() * (adapter.getCount() - 1));
         listView.setLayoutParams(par);
         listView.requestLayout();
+    }*/
+
+
+    public static class DetailMoviePagerAdapter extends FragmentPagerAdapter {
+        private static int NUMBER_ITEMS = 3;
+        private Context mContext;
+
+        public DetailMoviePagerAdapter(Context context, FragmentManager fragmentManager) {
+            super(fragmentManager);
+            mContext = context;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if (position == 0) {
+                    return new DetailsFragment();
+                } else if (position == 1) {
+                    return new TrailersFragment();
+                } else {
+                    return new ReviewsFragment();
+                }
+        }
+
+        @Override
+        public int getCount() {
+            return NUMBER_ITEMS;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            if (position == 0) {
+                return mContext.getString(R.string.details);
+            } else if (position == 1) {
+                return mContext.getString(R.string.trailers);
+            } else {
+                return mContext.getString(R.string.reviews);
+            }
+        }
+
+
     }
 }
+
+
+
 

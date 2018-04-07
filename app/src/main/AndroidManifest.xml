@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -24,8 +23,8 @@
         <activity
             android:name=".DetailActivity"
             android:label="@string/detail_activity"
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -40,10 +39,13 @@
         </activity>
 
         <provider
+            android:name=".DbData.FavoritesContentProvider"
             android:authorities="com.example.android.moviesapp"
-            android:name="com.example.android.moviesapp.DbData.FavoritesContentProvider"
-            android:exported="false"
-            />
+            android:exported="false" />
+
+        <activity android:name=".DetailsFragment" />
+        <activity android:name=".TrailersFragment" />
+        <activity android:name=".ReviewsFragment"></activity>
     </application>
 
 </manifest>

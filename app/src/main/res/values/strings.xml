@@ -19,6 +19,7 @@
     <string name="sort">Display and sort by</string>
     <string name="reviews">Reviews</string>
     <string name="trailers">Trailers</string>
+    <string name="details">Details</string>
 
     <string name="no_review">No review available at the moment.</string>
     <string name="add_favorites">Add to favorites</string>
