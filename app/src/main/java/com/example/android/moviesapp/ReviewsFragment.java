@@ -2,6 +2,7 @@ package com.example.android.moviesapp;
 
 
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
@@ -54,7 +55,17 @@ public class ReviewsFragment extends Fragment {
         API_KEY = this.getResources().getString(R.string.API_key);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
-        movieId = selectedMovie.getId();
+
+        Intent intent = getActivity().getIntent();
+        if (intent != null) {
+            Bundle parcelableExtra = intent.getExtras();
+            if (parcelableExtra != null) {
+                if (parcelableExtra.containsKey("selectedMovie")) {
+                    selectedMovie = intent.getParcelableExtra("selectedMovie");
+
+                    int movieId = selectedMovie.getId();
+
+
         if (savedInstanceState != null) {
             mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_VIEW);
         }
@@ -94,6 +105,17 @@ public class ReviewsFragment extends Fragment {
                 Log.e(LOG_TAG, t.toString());
             }
         });
+
+                } else {
+                    Log.i(LOG_TAG, "Parcelable does not contain selected movie info.");
+                }
+            } else {
+                Log.i(LOG_TAG, "Parcelable is null");
+            }
+        } else {
+            Log.i(LOG_TAG, "Intent is null.");
+        }
+
         return view;
     }
 

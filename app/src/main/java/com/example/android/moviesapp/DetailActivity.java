@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcelable;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -85,11 +86,13 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
 
-        ViewPager vpPager = findViewById(R.id.vpPager);
+        ViewPager vpPager = findViewById(R.id.pager_header);
         adapterViewPager = new DetailMoviePagerAdapter(this, getSupportFragmentManager());
         vpPager.setAdapter(adapterViewPager);
+        TabLayout tabLayout = findViewById(R.id.tabs);
 
-        /*this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        tabLayout.setupWithViewPager(vpPager);
+   /*     this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         posterIV = findViewById(R.id.poster_iv);
         titleTV = findViewById(R.id.title_tv);

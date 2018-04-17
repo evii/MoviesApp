@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.android.moviesapp.data.Movie;
 import com.example.android.moviesapp.data.Trailer;
 import com.example.android.moviesapp.data.TrailerAdapter;
 import com.example.android.moviesapp.utilities.ApiClient;
@@ -32,6 +33,7 @@ public class TrailersFragment extends Fragment {
     private ListView mListView;
     private TrailerAdapter mAdapter;
     private List<Trailer> trailers;
+    private Movie selectedMovie;
     private static final String LOG_TAG = "Fragment_Trailers";
 
     public TrailersFragment() {
@@ -45,6 +47,17 @@ public class TrailersFragment extends Fragment {
 
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         API_KEY = this.getResources().getString(R.string.API_key);
+
+
+        Intent intent = getActivity().getIntent();
+        if (intent != null) {
+            Bundle parcelableExtra = intent.getExtras();
+            if (parcelableExtra != null) {
+                if (parcelableExtra.containsKey("selectedMovie")) {
+                    selectedMovie = intent.getParcelableExtra("selectedMovie");
+
+                    int movieId = selectedMovie.getId();
+
 
 
         Call<Trailer.TrailersResults> trailerCall = apiInterface.getMovieTrailer(movieId, API_KEY);
@@ -76,7 +89,15 @@ public class TrailersFragment extends Fragment {
                 Log.e(LOG_TAG, t.toString());
             }
         });
-
+                } else {
+                    Log.i(LOG_TAG, "Parcelable does not contain selected movie info.");
+                }
+            } else {
+                Log.i(LOG_TAG, "Parcelable is null");
+            }
+        } else {
+            Log.i(LOG_TAG, "Intent is null.");
+        }
 
 
         return view;
