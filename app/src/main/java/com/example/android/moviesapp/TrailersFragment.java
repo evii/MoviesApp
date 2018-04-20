@@ -35,6 +35,8 @@ public class TrailersFragment extends Fragment {
     private List<Trailer> trailers;
     private Movie selectedMovie;
     private static final String LOG_TAG = "Fragment_Trailers";
+    private int mCurrentPosition;
+    private static final String STATE_POSITION = "statePosition";
 
     public TrailersFragment() {
         //constructor
@@ -59,36 +61,36 @@ public class TrailersFragment extends Fragment {
                     int movieId = selectedMovie.getId();
 
 
+                    Call<Trailer.TrailersResults> trailerCall = apiInterface.getMovieTrailer(movieId, API_KEY);
+                    trailerCall.enqueue(new Callback<Trailer.TrailersResults>() {
 
-        Call<Trailer.TrailersResults> trailerCall = apiInterface.getMovieTrailer(movieId, API_KEY);
-        trailerCall.enqueue(new Callback<Trailer.TrailersResults>() {
+                        @Override
+                        public void onResponse(Call<Trailer.TrailersResults> call, Response<Trailer.TrailersResults> response) {
+                            trailers = response.body().getTrailersResults();
 
-            @Override
-            public void onResponse(Call<Trailer.TrailersResults> call, Response<Trailer.TrailersResults> response) {
-                trailers = response.body().getTrailersResults();
+                            mListView = view.findViewById(R.id.trailers_list_view);
 
-                mListView = view.findViewById(R.id.trailers_list_view);
+                            mAdapter = new TrailerAdapter(getActivity(), trailers);
+                            mListView.setAdapter(mAdapter);
+                            //  justifyListViewHeightBasedOnChildren(mListView);
 
-                mAdapter = new TrailerAdapter(getActivity(), trailers);
-                mListView.setAdapter(mAdapter);
-              //  justifyListViewHeightBasedOnChildren(mListView);
+                            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    Trailer trailerSelected = trailers.get(position);
+                                    String url = trailerSelected.getmTrailerKey();
+                                    Intent intentTrailer = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                    startActivity(intentTrailer);
+                                }
+                            });
+                            mListView.setSelection(mCurrentPosition);
+                        }
 
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Trailer trailerSelected = trailers.get(position);
-                        String url = trailerSelected.getmTrailerKey();
-                        Intent intentTrailer = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(intentTrailer);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Call<Trailer.TrailersResults> call, Throwable t) {
-                Log.e(LOG_TAG, t.toString());
-            }
-        });
+                        @Override
+                        public void onFailure(Call<Trailer.TrailersResults> call, Throwable t) {
+                            Log.e(LOG_TAG, t.toString());
+                        }
+                    });
                 } else {
                     Log.i(LOG_TAG, "Parcelable does not contain selected movie info.");
                 }
@@ -101,5 +103,24 @@ public class TrailersFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        mCurrentPosition = mListView.getLastVisiblePosition();
+        savedInstanceState.putInt(STATE_POSITION, mCurrentPosition);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mCurrentPosition = savedInstanceState.getInt(STATE_POSITION);
+        } else {
+            Log.v(LOG_TAG, "savedInstanceState = null");
+        }
+
+
     }
 }

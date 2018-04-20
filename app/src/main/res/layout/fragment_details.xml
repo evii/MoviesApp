@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.android.moviesapp.DetailsFragment">
 
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/poster_iv"
@@ -94,3 +98,5 @@
             app:layout_constraintTop_toBottomOf="@+id/synopsis_tv" />
 
 </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
