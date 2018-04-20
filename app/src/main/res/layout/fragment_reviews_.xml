@@ -11,12 +11,12 @@
         android:id="@+id/reviews_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="28dp"
-        android:paddingBottom="8dp"
+        android:paddingLeft="@dimen/margin16"
+        android:paddingRight="@dimen/margin16"
+        android:paddingTop="@dimen/margin28"
+        android:paddingBottom="@dimen/margin8"
         android:text="@string/reviews"
-        android:textSize="20sp"
+        android:textSize="@dimen/text20"
         android:textStyle="bold"
         android:textColor="@color/colorAccent"/>
 
@@ -29,10 +29,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingTop="@dimen/margin8"
+            android:paddingBottom="@dimen/margin16"
+            android:paddingLeft="@dimen/margin16"
+            android:paddingRight="@dimen/margin16"
             android:text="@string/no_review"
             android:visibility="invisible"/>
 
@@ -40,7 +40,7 @@
             android:id="@+id/reviews_rec_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp"
+            android:padding="@dimen/margin16"
             >
 
         </android.support.v7.widget.RecyclerView>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="zero">0dp</dimen>
+    <dimen name="grid_column_width">150dp</dimen>
+    <dimen name="image_width">88dp</dimen>
+    <dimen name="image_height">120dp</dimen>
+    <dimen name="margin16">16dp</dimen>
+    <dimen name="margin20">20dp</dimen>
+    <dimen name="margin8">8dp</dimen>
+    <dimen name="margin28">28dp</dimen>
+    <dimen name="line1dp">1dp</dimen>
+
+    <dimen name="text20">20sp</dimen>
+
+</resources>

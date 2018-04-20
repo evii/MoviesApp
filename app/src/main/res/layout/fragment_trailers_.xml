@@ -11,12 +11,12 @@
         android:id="@+id/trailers_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="8dp"
+        android:paddingLeft="@dimen/margin16"
+        android:paddingRight="@dimen/margin16"
+        android:paddingTop="@dimen/margin16"
+        android:paddingBottom="@dimen/margin8"
         android:text="@string/trailers"
-        android:textSize="20sp"
+        android:textSize="@dimen/text20"
         android:textStyle="bold"
         android:textColor="@color/colorAccent"/>
 
@@ -24,8 +24,8 @@
         android:id="@+id/trailers_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingLeft="@dimen/margin16"
+        android:paddingRight="@dimen/margin16"
         app:layout_constraintTop_toBottomOf="parent">
 
     </ListView>

@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerInParent="true"
-    android:columnWidth="150dp"
+    android:columnWidth="@dimen/grid_column_width"
     android:gravity="center"
-    android:horizontalSpacing="0dp"
+    android:horizontalSpacing="@dimen/zero"
     android:numColumns="auto_fit"
     android:stretchMode="columnWidth"
-    android:verticalSpacing="0dp"
+    android:verticalSpacing="@dimen/zero"
     tools:context="com.example.android.moviesapp.MainActivity"></GridView>
