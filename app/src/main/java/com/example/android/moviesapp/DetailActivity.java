@@ -13,9 +13,7 @@ import android.os.Bundle;
 public class DetailActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "DetailActivity";
-
     FragmentPagerAdapter adapterViewPager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +27,7 @@ public class DetailActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(vpPager);
     }
 
+    // Viewpager
     public static class DetailMoviePagerAdapter extends FragmentPagerAdapter {
         private static int NUMBER_ITEMS = 3;
         private Context mContext;
@@ -66,7 +65,3 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 }
-
-
-
-

@@ -16,10 +16,11 @@ public class Reviews {
     @SerializedName("content")
     private String mContent;
 
-    public Reviews(String author, String content){
+    public Reviews(String author, String content) {
         mAuthor = author;
         mContent = content;
     }
+
     public String getAuthor() {
         return mAuthor;
     }

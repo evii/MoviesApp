@@ -3,8 +3,6 @@ package com.example.android.moviesapp.DbData;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import java.net.URI;
-
 /**
  * Created by evi on 17. 3. 2018.
  */

@@ -45,8 +45,7 @@ public class DetailsFragment extends Fragment {
 
     public DetailsFragment() {
         //constructor
-           }
-
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

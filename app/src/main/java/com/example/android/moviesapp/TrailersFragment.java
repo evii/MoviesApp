@@ -28,7 +28,6 @@ import retrofit2.Response;
 public class TrailersFragment extends Fragment {
 
     ApiInterface apiInterface;
-    private int movieId;
     private String API_KEY;
     private ListView mListView;
     private TrailerAdapter mAdapter;
@@ -59,7 +58,6 @@ public class TrailersFragment extends Fragment {
                     selectedMovie = intent.getParcelableExtra("selectedMovie");
 
                     int movieId = selectedMovie.getId();
-
 
                     Call<Trailer.TrailersResults> trailerCall = apiInterface.getMovieTrailer(movieId, API_KEY);
                     trailerCall.enqueue(new Callback<Trailer.TrailersResults>() {
@@ -120,7 +118,5 @@ public class TrailersFragment extends Fragment {
         } else {
             Log.v(LOG_TAG, "savedInstanceState = null");
         }
-
-
     }
 }

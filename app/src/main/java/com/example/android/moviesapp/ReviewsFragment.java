@@ -1,13 +1,11 @@
 package com.example.android.moviesapp;
 
 
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,7 +30,6 @@ import retrofit2.Response;
 
 public class ReviewsFragment extends Fragment {
 
-    private int movieId;
     private Movie selectedMovie;
     private Parcelable mSavedRecyclerLayoutState;
     private static final String BUNDLE_RECYCLER_VIEW = "bundleRecyclerView";
@@ -66,45 +63,45 @@ public class ReviewsFragment extends Fragment {
                     int movieId = selectedMovie.getId();
 
 
-        if (savedInstanceState != null) {
-            mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_VIEW);
-        }
-
-        Call<Reviews.ReviewsResult> reviewsCall = apiInterface.getMovieReviews(movieId, API_KEY);
-        reviewsCall.enqueue(new Callback<Reviews.ReviewsResult>() {
-
-            @RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void onResponse(Call<Reviews.ReviewsResult> call, Response<Reviews.ReviewsResult> response) {
-                List<Reviews> reviews = response.body().getReviewsList();
-                TextView noReviewsTv = view.findViewById(R.id.no_review_tv);
-
-                if (reviews.size() == 0) {
-                    noReviewsTv.setVisibility(View.VISIBLE);
-
-                } else {
-                    noReviewsTv.setVisibility(View.INVISIBLE);
-                    recyclerView = view.findViewById(R.id.reviews_rec_view);
-                    mRecAdapter = new ReviewsAdapter(reviews);
-                    layoutManager = new LinearLayoutManager(getContext());
-
-                    recyclerView.setLayoutManager(layoutManager);
-                    recyclerView.setItemAnimator(new DefaultItemAnimator());
-                    recyclerView.setAdapter(mRecAdapter);
-                    recyclerView.setNestedScrollingEnabled(false);
-
-                    //restore recycler view position
-                    if (mSavedRecyclerLayoutState != null) {
-                        recyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
+                    if (savedInstanceState != null) {
+                        mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_VIEW);
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<Reviews.ReviewsResult> call, Throwable t) {
-                Log.e(LOG_TAG, t.toString());
-            }
-        });
+                    Call<Reviews.ReviewsResult> reviewsCall = apiInterface.getMovieReviews(movieId, API_KEY);
+                    reviewsCall.enqueue(new Callback<Reviews.ReviewsResult>() {
+
+                        @RequiresApi(api = Build.VERSION_CODES.M)
+                        @Override
+                        public void onResponse(Call<Reviews.ReviewsResult> call, Response<Reviews.ReviewsResult> response) {
+                            List<Reviews> reviews = response.body().getReviewsList();
+                            TextView noReviewsTv = view.findViewById(R.id.no_review_tv);
+
+                            if (reviews.size() == 0) {
+                                noReviewsTv.setVisibility(View.VISIBLE);
+
+                            } else {
+                                noReviewsTv.setVisibility(View.INVISIBLE);
+                                recyclerView = view.findViewById(R.id.reviews_rec_view);
+                                mRecAdapter = new ReviewsAdapter(reviews);
+                                layoutManager = new LinearLayoutManager(getContext());
+
+                                recyclerView.setLayoutManager(layoutManager);
+                                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                                recyclerView.setAdapter(mRecAdapter);
+                                recyclerView.setNestedScrollingEnabled(false);
+
+                                //restore recycler view position
+                                if (mSavedRecyclerLayoutState != null) {
+                                    recyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Reviews.ReviewsResult> call, Throwable t) {
+                            Log.e(LOG_TAG, t.toString());
+                        }
+                    });
 
                 } else {
                     Log.i(LOG_TAG, "Parcelable does not contain selected movie info.");
@@ -123,16 +120,13 @@ public class ReviewsFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(BUNDLE_RECYCLER_VIEW, recyclerView.getLayoutManager().onSaveInstanceState());
-
-
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState != null)
-        { mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_VIEW);
+        if (savedInstanceState != null) {
+            mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_VIEW);
         }
-
     }
 }

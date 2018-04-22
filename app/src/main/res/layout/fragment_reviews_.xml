@@ -11,14 +11,14 @@
         android:id="@+id/reviews_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/margin8"
         android:paddingLeft="@dimen/margin16"
         android:paddingRight="@dimen/margin16"
         android:paddingTop="@dimen/margin28"
-        android:paddingBottom="@dimen/margin8"
         android:text="@string/reviews"
+        android:textColor="@color/colorAccent"
         android:textSize="@dimen/text20"
-        android:textStyle="bold"
-        android:textColor="@color/colorAccent"/>
+        android:textStyle="bold" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -29,23 +29,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingTop="@dimen/margin8"
             android:paddingBottom="@dimen/margin16"
             android:paddingLeft="@dimen/margin16"
             android:paddingRight="@dimen/margin16"
+            android:paddingTop="@dimen/margin8"
             android:text="@string/no_review"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/reviews_rec_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/margin16"
-            >
+            android:padding="@dimen/margin16">
 
         </android.support.v7.widget.RecyclerView>
 
-
     </RelativeLayout>
-
 </LinearLayout>

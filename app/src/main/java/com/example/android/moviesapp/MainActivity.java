@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         API_KEY = this.getResources().getString(R.string.API_key);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
-
 // setting onItemClickListener on the items in gridview
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -79,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         mCurrentPosition = savedInstanceState.getInt(STATE_POSITION);
 
     }
-
 
     private void loadSortDisplayPreferences(SharedPreferences sharedPreferences) {
         String preferenceSelected = sharedPreferences.getString(getString(R.string.pref_key), getString(R.string.popularity_label));
