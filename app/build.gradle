@@ -10,6 +10,12 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+
+        // Please ensure you have a valid API KEY for themoviedb.org to use this app
+        // Look at https://www.themoviedb.org/documentation/api
+        // A valid key will need to be entered here:
+        buildConfigField("String", "API_KEY", API_KEY)
+
     }
     buildTypes {
         release {

@@ -37,10 +37,13 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    // insert API key, that you can obtain at: https://www.themoviedb.org/documentation/api
+    private String API_KEY;
+
     private MoviesAdapter moviesAdapter;
     private GridView gridView;
     public List<Movie> mMovies;
-    private String API_KEY;
+
     private static final String TAG = "MainActivity";
     private ApiInterface apiInterface;
     private int mCurrentPosition;
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         setContentView(R.layout.activity_main);
 
         gridView = findViewById(R.id.gridview);
-        API_KEY = this.getResources().getString(R.string.API_key);
+        API_KEY = BuildConfig.API_KEY;
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
 // setting onItemClickListener on the items in gridview

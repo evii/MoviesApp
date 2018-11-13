@@ -49,7 +49,7 @@ public class ReviewsFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_reviews_, container, false);
 
-        API_KEY = this.getResources().getString(R.string.API_key);
+        API_KEY = BuildConfig.API_KEY;
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
 

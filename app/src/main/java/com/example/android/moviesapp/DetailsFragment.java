@@ -59,7 +59,7 @@ public class DetailsFragment extends Fragment {
         synopsisTV = view.findViewById(R.id.synopsis_tv);
         addFavoritesButton = view.findViewById(R.id.button_add_favorites);
         removeFavoritesButton = view.findViewById(R.id.button_remove_favorites);
-        API_KEY = this.getResources().getString(R.string.API_key);
+        API_KEY = BuildConfig.API_KEY;
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
         Intent intent = getActivity().getIntent();

@@ -47,7 +47,7 @@ public class TrailersFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_trailers_, container, false);
 
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
-        API_KEY = this.getResources().getString(R.string.API_key);
+        API_KEY = BuildConfig.API_KEY;
 
 
         Intent intent = getActivity().getIntent();
