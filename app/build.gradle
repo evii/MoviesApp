@@ -15,7 +15,6 @@ android {
         // Look at https://www.themoviedb.org/documentation/api
         // A valid key will need to be entered here:
         buildConfigField("String", "API_KEY", API_KEY)
-
     }
     buildTypes {
         release {
